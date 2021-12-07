@@ -116,7 +116,9 @@ void OpenGLWindow::paintUI() {
   ImGui::PushFont(m_font);
 
   if (m_gameData.m_state == State::Init) {
-    ImGui::Text("VOCÊ TEM 20 SEGUNDOS PARA ENCONTRAR TODAS AS BOLAS VERMELHAS, \n FUJA DAS BOLAS AMARELAS !!!!!");
+    ImGui::Text(
+        "VOCÊ TEM 20 SEGUNDOS PARA ENCONTRAR TODAS AS BOLAS VERMELHAS, \n FUJA "
+        "DAS BOLAS AMARELAS !!!!!");
     if (ImGui::Button("Jogar", ImVec2(300, 80))) {
       initBalls(5);
       m_gameData.m_state = State::Menu;
@@ -288,6 +290,7 @@ void OpenGLWindow::update() {
   m_camera.dolly(m_dollySpeed * deltaTime);
   m_camera.truck(m_truckSpeed * deltaTime);
   m_camera.pan(m_panSpeed * deltaTime);
+  // m_camera.pany(m_panySpeed * deltaTime);
 }
 
 void OpenGLWindow::initBalls(int quantity) {
@@ -304,8 +307,17 @@ void OpenGLWindow::initBalls(int quantity) {
   }
 
   for (auto& wrong_ball : m_wrong_balls) {
-    wrong_ball.position_x = m_randomDist(re);
-    wrong_ball.position_z = m_randomDist(re);
+    float position_x = m_randomDist(re);
+    float position_z = m_randomDist(re);
+    for (auto& ball : m_balls) {
+      while (checkFoundDistance(position_x, position_z, ball.position_x,
+                                ball.position_z)) {
+        position_x = m_randomDist(re);
+        position_z = m_randomDist(re);
+      }
+    }
+    wrong_ball.position_x = position_x;
+    wrong_ball.position_z = position_z;
     wrong_ball.wasFound = false;
   }
 }
@@ -313,8 +325,8 @@ void OpenGLWindow::initBalls(int quantity) {
 void OpenGLWindow::checkFound() {
   for (auto& ball : m_balls) {
     if (!ball.wasFound) {
-      bool found =
-          checkFoundBetweenCameraAndPosition(ball.position_x, ball.position_z);
+      bool found = checkFoundDistance(ball.position_x, ball.position_z,
+                                      m_camera.m_eye.x, m_camera.m_eye.z);
       if (found) {
         ball.wasFound = true;
         numberOfFoundItems++;
@@ -323,30 +335,27 @@ void OpenGLWindow::checkFound() {
   }
 
   for (auto& wrong_ball : m_wrong_balls) {
-      bool found = checkFoundBetweenCameraAndPosition(wrong_ball.position_x,
-                                                      wrong_ball.position_z);
-      if (found) {
-        wrong_ball.wasFound = true;
-        removeBallInFoundItems();
-      }
-    }
-}
-
-void OpenGLWindow::removeBallInFoundItems() {
-  for (auto& ball : m_balls) {
-    if (ball.wasFound) {
-      ball.wasFound = false;
-      numberOfFoundItems = 0;
-      return;
+    bool found =
+        checkFoundDistance(wrong_ball.position_x, wrong_ball.position_z,
+                           m_camera.m_eye.x, m_camera.m_eye.z);
+    if (found) {
+      wrong_ball.wasFound = true;
+      removeBallInFoundItems();
     }
   }
 }
 
-bool OpenGLWindow::checkFoundBetweenCameraAndPosition(float position_x,
-                                                      float position_z) {
-  const auto distance{
-      glm::distance(glm::vec3(position_x, 0, position_z),
-                    glm::vec3(m_camera.m_eye.x, 0, m_camera.m_eye.z))};
+void OpenGLWindow::removeBallInFoundItems() {
+  for (auto& ball : m_balls) {
+    if (ball.wasFound) ball.wasFound = false;
+  }
+  numberOfFoundItems = 0;
+}
+
+bool OpenGLWindow::checkFoundDistance(float position_x, float position_z,
+                                      float position2_x, float position2_z) {
+  const auto distance{glm::distance(glm::vec3(position_x, 0, position_z),
+                                    glm::vec3(position2_x, 0, position2_z))};
 
   return distance < 0.8f;
 }

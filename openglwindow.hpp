@@ -79,7 +79,7 @@ class OpenGLWindow : public abcg::OpenGLWindow {
   void renderBalls();
   void paintModels();
   void removeBallInFoundItems();
-  bool checkFoundBetweenCameraAndPosition(float position_x, float position_z);
+  bool checkFoundDistance(float position_x, float position_z, float position2_x, float position2_z);
 };
 
 #endif
