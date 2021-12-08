@@ -618,4 +618,4 @@ void OpenGLWindow::checkGameCondition() {
 ```
 
 ### Model e Câmera
-Essas classes foram criadas com base nas aulas 7 e 8, assim usamos o código apresentado em aula. 
+Essas classes foram criadas com base nas aulas 7, 9 e 10, assim usamos o código apresentado em aula. 
