@@ -192,7 +192,7 @@ void OpenGLWindow::initializeGL() {
 **OpenGLWindow::initBalls**
 
 Primeiramente removemos os atributos da lista de bolas (m_balls), em seguida atribuimos o tamanho da lista de acordo com a quantidade de bolas (essa quantidade será escolhida pelo usuário), por fim populamos a lista, nessa parte adicionamos nos atribuitos position_x e position_z valores aleatórios entre -2 e 2 e adicionamos no atributo wasFound o valor false, tendo em vista que no inicio nenhuma bola foi encontrada.
-Em seguida, criamos as bolas que não poderão ser encontradas, o processo é bem parecido com a criação da m_balls, no entanto, checamos se a distancia entre os valores gerados para position da "wrong ball" possuem uma distância inferior ao valor 0.8f de qualquer bola presente na m_balls, caso satisfaça essa condição geramos novavemente os atributos position_x e position_z, fazemos isso para não termos uma "wrong ball" colada com uma bola que precise ser encontrada, pois assim não teriamos como ganhar o jogo. 
+Em seguida, criamos as bolas que não poderão ser encontradas (note que definimos o tamanho da lista m_wrong_balls de acordo com a quantidade de bolas - 2), o processo é bem parecido com a criação da m_balls, no entanto, checamos se a distancia entre os valores gerados para position da "wrong ball" possuem uma distância inferior ao valor 0.8f de qualquer bola presente na m_balls, caso satisfaça essa condição geramos novavemente os atributos position_x e position_z, fazemos isso para não termos uma "wrong ball" colada com uma bola que precise ser encontrada, pois assim não teriamos como ganhar o jogo. 
 
 
 ```
