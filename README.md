@@ -136,6 +136,8 @@ struct BallPosition {
 ```
 
 m_balls - lista de BallPosition com as bolas a serem encontradas
+
+
 m_wrong_balls - lista de BallPosition com as bolas que você deve fugir
 
 ```
