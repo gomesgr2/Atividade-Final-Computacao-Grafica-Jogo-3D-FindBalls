@@ -544,24 +544,60 @@ if (ImGui::Button("FÁCIL - 3 BOLAS", ImVec2(300, 80))) {
     }
 
 ```
+**OpenGLWindow::checkFoundDistance**
+
+Função que compara as posições dos atributos passados por parâmetro e retorna se essa distância é inferior ou não a 0.8f. (Já vimos ela na criação da m_wrong_balls) 
+
+```
+
+bool OpenGLWindow::checkFoundDistance(float position_x, float position_z,
+                                      float position2_x, float position2_z) {
+  const auto distance{glm::distance(glm::vec3(position_x, 0, position_z),
+                                    glm::vec3(position2_x, 0, position2_z))};
+
+  return distance < 0.8f;
+}
+
+```
+
 **OpenGLWindow::checkFound** 
 
-Essa função verifica se algumas das bolas foi encontrada, para isso é realizado uma interação na lista m_balls e posteriormente checamos se a bola ainda não foi encontrada, caso o atributo wasFound for igual a false, então realizamos um cálculo de distância entre a posição da bola e a posição da câmera, caso essa distância for menor que 0.8f, atribuímos o valor do wasFound como true e modificamos o contador de items encontrados (váriavel numberOfFoundItems).
+Essa função verifica se algumas das bolas foi encontrada, para isso é realizado uma interação na lista m_balls e posteriormente checamos se a bola ainda não foi encontrada, caso o atributo wasFound for igual a false, então chamamos a função checkFoundDistance passando a posição da bola e da câmera, caso essa distância for menor que 0.8f, atribuímos o valor do wasFound como true e modificamos o contador de items encontrados (váriavel numberOfFoundItems).
+Além disso, verificamos também se a alguma "wrong ball" foi encontrada, caso o usuário encontre a "wrong ball" chamamos a função removeBallInFoundItems que modifica o contador de items encontrados para 0 e intera a lista m_balls modificando os atributos wasFound que são true para false.
+
 ```
 void OpenGLWindow::checkFound() {
   for (auto& ball : m_balls) {
     if (!ball.wasFound) {
-      const auto distance{
-          glm::distance(glm::vec3(ball.position_x, 0, ball.position_z),
-                        glm::vec3(m_camera.m_eye.x, 0, m_camera.m_eye.z))};
-      if (distance < 0.8f) {
+      bool found = checkFoundDistance(ball.position_x, ball.position_z,
+                                      m_camera.m_eye.x, m_camera.m_eye.z);
+      if (found) {
         ball.wasFound = true;
         numberOfFoundItems++;
       }
     }
   }
+
+  for (auto& wrong_ball : m_wrong_balls) {
+    bool found =
+        checkFoundDistance(wrong_ball.position_x, wrong_ball.position_z,
+                           m_camera.m_eye.x, m_camera.m_eye.z);
+    if (found) {
+      wrong_ball.wasFound = true;
+      removeBallInFoundItems();
+    }
+  }
 }
 ```
+
+```
+void OpenGLWindow::removeBallInFoundItems() {
+  for (auto& ball : m_balls) {
+    if (ball.wasFound) ball.wasFound = false;
+  }
+  numberOfFoundItems = 0;
+}
+``
 
 **OpenGLWindow::checkGameCondition**
 
