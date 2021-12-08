@@ -597,7 +597,7 @@ void OpenGLWindow::removeBallInFoundItems() {
   }
   numberOfFoundItems = 0;
 }
-``
+```
 
 **OpenGLWindow::checkGameCondition**
 
